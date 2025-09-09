@@ -138,18 +138,7 @@ jobs:
           
           # Comment on the issue
           gh issue comment ${{ github.event.issue.number }} \
-            --body "🤖 **Claude Code Response**
-
-Hello! Claude Code with TaskMaster v0.18 is working!
-
-This workflow was triggered successfully without an Anthropic API key.
-
-**Configuration:**
-- Main model: sonnet (via --claude-code flag)
-- Research model: sonar-pro (Perplexity)
-- TaskMaster: v0.25.1+
-
-✅ The integration is working correctly!"
+            --body $'🤖 **Claude Code Response**\n\nHello! Claude Code with TaskMaster v0.18 is working!\n\nThis workflow was triggered successfully without an Anthropic API key.\n\n**Configuration:**\n- Main model: sonnet (via --claude-code flag)\n- Research model: sonar-pro (Perplexity)\n- TaskMaster: v0.25.1+\n\n✅ The integration is working correctly!'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
