@@ -1,0 +1,53 @@
+name: Claude Automation
+
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    
+    steps:
+      - name: Check for @claude mention
+        id: check
+        run: |
+          BODY="${{ github.event.issue.body || github.event.comment.body || '' }}"
+          if [[ "$BODY" == *"@claude"* ]]; then
+            echo "has_mention=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_mention=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Checkout
+        if: steps.check.outputs.has_mention == 'true'
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        if: steps.check.outputs.has_mention == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Execute Claude Code Action
+        if: steps.check.outputs.has_mention == 'true' && secrets.ANTHROPIC_API_KEY != ''
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            Hello! You've been triggered by an @claude mention.
+            Please respond to the issue with a confirmation message.
+            
+            Context: ${{ github.event.issue.body || github.event.comment.body }}
+          claude_args: "--max-turns 5 --conversation-style concise"
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
