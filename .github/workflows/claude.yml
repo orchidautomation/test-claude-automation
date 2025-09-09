@@ -1,0 +1,21 @@
+name: Claude Code Integration
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+
+jobs:
+  claude:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Test Claude Action
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: "Please comment on this issue with a greeting message."
+          claude_args: "--max-turns 1"
