@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-      contents: read
+      contents: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
       - name: Test Claude Action
         uses: anthropics/claude-code-action@v1
         with:
